@@ -1,0 +1,120 @@
+@startuml
+
+' Використання нотації Crow's Foot
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <b>x</b>
+!define foreign_key(x) <u>x</u>
+!define column(x) x
+
+' Стиль для зв'язків
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor White
+  ArrowColor Black
+  BorderColor Black
+}
+
+' Сутності
+table(Component) {
+  primary_key(id)
+  column(name)
+  column(type)
+  column(powerConsumption)
+  column(description)
+  foreign_key(manufacturer_id)
+}
+
+table(Manufacturer) {
+  primary_key(id)
+  column(name)
+  column(country)
+  column(website)
+  column(foundedYear)
+}
+
+table(CPU) {
+  foreign_key(component_id)
+  column(cores)
+  column(threads)
+  column(baseClockGHz)
+  column(boostClockGHz)
+  column(socket)
+  column(cacheSize)
+  column(processNm)
+}
+
+table(GPU) {
+  foreign_key(component_id)
+  column(memoryGB)
+  column(memoryType)
+  column(coreClock)
+  column(boostClock)
+  column(interface)
+  column(length)
+}
+
+table(RAM) {
+  foreign_key(component_id)
+  column(capacityGB)
+  column(speed)
+  column(type)
+  column(casLatency)
+  column(modules)
+}
+
+table(Storage) {
+  foreign_key(component_id)
+  column(capacityGB)
+  column(type) ' SSD, HDD, etc.
+  column(interface) ' SATA, NVMe, etc.
+  column(readSpeed)
+  column(writeSpeed)
+}
+
+table(Motherboard) {
+  foreign_key(component_id)
+  column(chipset)
+  column(socket)
+  column(formFactor)
+  column(memorySlots)
+  column(maxMemory)
+}
+
+table(User) {
+  primary_key(id)
+  column(username)
+  column(email)
+  column(password)
+  column(registrationDate)
+}
+
+table(ComputerBuild) {
+  primary_key(id)
+  column(name)
+  column(description)
+  column(createdDate)
+  column(totalPowerConsumption)
+  column(estimatedPrice)
+  foreign_key(user_id)
+}
+
+table(BuildComponent) {
+  primary_key(id)
+  foreign_key(build_id)
+  foreign_key(component_id)
+  column(quantity)
+}
+
+' Зв'язки між таблицями з використанням нотації Crow's Foot
+Component "*" --o "1" Manufacturer : belongs to
+CPU "1" --|> "1" Component : is a
+GPU "1" --|> "1" Component : is a
+RAM "1" --|> "1" Component : is a
+Storage "1" --|> "1" Component : is a
+Motherboard "1" --|> "1" Component : is a
+
+User "1" --o "*" ComputerBuild : creates
+ComputerBuild "1" --o "*" BuildComponent : contains
+Component "1" --o "*" BuildComponent : used in
+
+@enduml
